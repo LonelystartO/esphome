@@ -1,7 +1,7 @@
 #include "proto.h"
 #include <cinttypes>
+#include <chrono>  // for high_resolution_clock
 #include "esphome/core/log.h"
-#include "esphome/core/hal.h"  // for millis()
 
 namespace esphome {
 namespace api {
@@ -10,21 +10,25 @@ static const char *const TAG = "api.proto";
 
 void ProtoService::log_protobuf_encode_timing(const ProtoMessage &msg) {
   // Benchmark without reserve
-  auto start_without_reserve = millis();
+  auto start_without_reserve = std::chrono::high_resolution_clock::now();
   std::vector<uint8_t> buffer_without_reserve;
   ProtoWriteBuffer write_buffer_without_reserve(&buffer_without_reserve);
   msg.encode(write_buffer_without_reserve);
-  auto time_without_reserve = millis() - start_without_reserve;
+  auto end_without_reserve = std::chrono::high_resolution_clock::now();
+  auto time_without_reserve =
+      std::chrono::duration_cast<std::chrono::microseconds>(end_without_reserve - start_without_reserve).count();
 
   // Benchmark with reserve (including size calculation)
-  auto start_with_reserve = millis();
+  auto start_with_reserve = std::chrono::high_resolution_clock::now();
   uint32_t msg_size = 0;
   msg.calculate_size(msg_size);
   std::vector<uint8_t> buffer_with_reserve;
   buffer_with_reserve.reserve(msg_size);
   ProtoWriteBuffer write_buffer_with_reserve(&buffer_with_reserve);
   msg.encode(write_buffer_with_reserve);
-  auto time_with_reserve = millis() - start_with_reserve;
+  auto end_with_reserve = std::chrono::high_resolution_clock::now();
+  auto time_with_reserve =
+      std::chrono::duration_cast<std::chrono::microseconds>(end_with_reserve - start_with_reserve).count();
 
   // Calculate improvement percentage
   uint32_t improvement_percent = 0;
@@ -34,10 +38,10 @@ void ProtoService::log_protobuf_encode_timing(const ProtoMessage &msg) {
 
   // Log results
   ESP_LOGW(TAG,
-           "Protobuf encoding benchmark: without reserve: %" PRIu32 "ms, with reserve (including size calc): %" PRIu32
-           "ms, improvement: "
+           "Protobuf encoding benchmark: without reserve: %" PRIu64 "us, with reserve (including size calc): %" PRIu64
+           "us, improvement: "
            "%" PRIu32 "%%, size: %" PRIu32 " bytes",
-           time_without_reserve, time_with_reserve, improvement_percent, msg_size);
+           (uint64_t) time_without_reserve, (uint64_t) time_with_reserve, improvement_percent, msg_size);
 }
 
 void ProtoMessage::decode(const uint8_t *buffer, size_t length) {
