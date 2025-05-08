@@ -13,6 +13,9 @@
 namespace esphome {
 namespace api {
 
+// Function to benchmark and log protobuf encoding times
+void log_protobuf_encode_timing(const ProtoMessage &msg);
+
 /// Representation of a VarInt - in ProtoBuf should be 64bit but we only use 32bit
 class ProtoVarInt {
  public:
@@ -305,6 +308,9 @@ class ProtoService {
 
   // Optimized method that pre-allocates buffer based on message size
   template<class C> bool send_message_(const C &msg, uint32_t message_type) {
+    // Log protobuf encoding benchmark
+    log_protobuf_encode_timing(msg);
+
     uint32_t msg_size = 0;
     msg.calculate_size(msg_size);
 
