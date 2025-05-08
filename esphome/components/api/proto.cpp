@@ -10,21 +10,21 @@ static const char *const TAG = "api.proto";
 
 void ProtoService::log_protobuf_encode_timing(const ProtoMessage &msg) {
   // Benchmark without reserve
-  auto start_without_reserve = millis();
+  auto start_without_reserve = esphome::millis();
   std::vector<uint8_t> buffer_without_reserve;
   ProtoWriteBuffer write_buffer_without_reserve(&buffer_without_reserve);
   msg.encode(write_buffer_without_reserve);
-  auto time_without_reserve = millis() - start_without_reserve;
+  auto time_without_reserve = esphome::millis() - start_without_reserve;
 
   // Benchmark with reserve (including size calculation)
-  auto start_with_reserve = millis();
+  auto start_with_reserve = esphome::millis();
   uint32_t msg_size = 0;
   msg.calculate_size(msg_size);
   std::vector<uint8_t> buffer_with_reserve;
   buffer_with_reserve.reserve(msg_size);
   ProtoWriteBuffer write_buffer_with_reserve(&buffer_with_reserve);
   msg.encode(write_buffer_with_reserve);
-  auto time_with_reserve = millis() - start_with_reserve;
+  auto time_with_reserve = esphome::millis() - start_with_reserve;
 
   // Calculate improvement percentage
   uint32_t improvement_percent = 0;
