@@ -7,7 +7,7 @@ namespace api {
 
 static const char *const TAG = "api.proto";
 
-void log_protobuf_encode_timing(const ProtoMessage &msg) {
+void ProtoService::log_protobuf_encode_timing(const ProtoMessage &msg) {
   // Benchmark without reserve
   auto start_without_reserve = millis();
   std::vector<uint8_t> buffer_without_reserve;
