@@ -1,6 +1,7 @@
 #include "proto.h"
 #include <cinttypes>
 #include "esphome/core/log.h"
+#include "esphome/core/helpers.h"  // for millis()
 
 namespace esphome {
 namespace api {
