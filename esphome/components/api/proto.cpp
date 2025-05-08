@@ -33,8 +33,9 @@ void log_protobuf_encode_timing(const ProtoMessage &msg) {
 
   // Log results
   ESP_LOGW(TAG,
-           "Protobuf encoding benchmark: without reserve: %ums, with reserve (including size calc): %ums, improvement: "
-           "%u%%, size: %u bytes",
+           "Protobuf encoding benchmark: without reserve: %" PRIu32 "ms, with reserve (including size calc): %" PRIu32
+           "ms, improvement: "
+           "%" PRIu32 "%%, size: %" PRIu32 " bytes",
            time_without_reserve, time_with_reserve, improvement_percent, msg_size);
 }
 
