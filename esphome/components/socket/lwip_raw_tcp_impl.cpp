@@ -380,6 +380,22 @@ class LWIPRawImpl : public Socket {
     }
     return ret;
   }
+  ssize_t available() override {
+    if (pcb_ == nullptr) {
+      errno = ECONNRESET;
+      return -1;
+    }
+
+    // Check if we have data in the receive buffer
+    if (rx_buf_ != nullptr) {
+      size_t pb_len = rx_buf_->len;
+      size_t pb_left = pb_len - rx_buf_offset_;
+      return pb_left;
+    }
+
+    // No data in buffer
+    return 0;
+  }
   ssize_t internal_write(const void *buf, size_t len) {
     if (pcb_ == nullptr) {
       errno = ECONNRESET;

@@ -183,14 +183,14 @@ class APIPlaintextFrameHelper : public APIFrameHelper {
 
   std::string info_;
   // Fixed-size header buffer for plaintext protocol:
-  // We only need space for the two varints since we validate the indicator byte separately.
+  // We need space for the indicator byte and the two varints.
   // To match noise protocol's maximum message size (65535), we need:
-  // 3 bytes for message size varint (supports up to 2097151) + 2 bytes for message type varint
+  // 1 byte for indicator + 3 bytes for message size varint (supports up to 2097151) + 2 bytes for message type varint
   //
   // While varints could theoretically be up to 10 bytes each for 64-bit values,
   // attempting to process messages with headers that large would likely crash the
   // ESP32 due to memory constraints.
-  uint8_t rx_header_buf_[5];  // 5 bytes for varints (3 for size + 2 for type)
+  uint8_t rx_header_buf_[6];  // 1 byte for indicator + 5 bytes for varints (3 for size + 2 for type)
   uint8_t rx_header_buf_pos_ = 0;
   bool rx_header_parsed_ = false;
   uint32_t rx_header_parsed_type_ = 0;

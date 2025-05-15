@@ -101,6 +101,13 @@ class BSDSocketImpl : public Socket {
     return ::readv(fd_, iov, iovcnt);
 #endif
   }
+  ssize_t available() override {
+    int bytes_available = 0;
+    int ret = ::ioctl(fd_, FIONREAD, &bytes_available);
+    if (ret == -1)
+      return -1;
+    return bytes_available;
+  }
   ssize_t write(const void *buf, size_t len) override { return ::write(fd_, buf, len); }
   ssize_t send(void *buf, size_t len, int flags) { return ::send(fd_, buf, len, flags); }
   ssize_t writev(const struct iovec *iov, int iovcnt) override {

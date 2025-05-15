@@ -38,6 +38,7 @@ class Socket {
   virtual ssize_t recvfrom(void *buf, size_t len, sockaddr *addr, socklen_t *addr_len) = 0;
 #endif
   virtual ssize_t readv(const struct iovec *iov, int iovcnt) = 0;
+  virtual ssize_t available() = 0;  // Returns number of bytes available to read without blocking, or -1 on error
   virtual ssize_t write(const void *buf, size_t len) = 0;
   virtual ssize_t writev(const struct iovec *iov, int iovcnt) = 0;
   virtual ssize_t sendto(const void *buf, size_t len, int flags, const struct sockaddr *to, socklen_t tolen) = 0;

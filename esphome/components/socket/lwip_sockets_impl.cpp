@@ -81,6 +81,13 @@ class LwIPSocketImpl : public Socket {
   int listen(int backlog) override { return lwip_listen(fd_, backlog); }
   ssize_t read(void *buf, size_t len) override { return lwip_read(fd_, buf, len); }
   ssize_t readv(const struct iovec *iov, int iovcnt) override { return lwip_readv(fd_, iov, iovcnt); }
+  ssize_t available() override {
+    int bytes_available = 0;
+    int ret = lwip_ioctl(fd_, FIONREAD, &bytes_available);
+    if (ret == -1)
+      return -1;
+    return bytes_available;
+  }
   ssize_t write(const void *buf, size_t len) override { return lwip_write(fd_, buf, len); }
   ssize_t send(void *buf, size_t len, int flags) { return lwip_send(fd_, buf, len, flags); }
   ssize_t writev(const struct iovec *iov, int iovcnt) override { return lwip_writev(fd_, iov, iovcnt); }
