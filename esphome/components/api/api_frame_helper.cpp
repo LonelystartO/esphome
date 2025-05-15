@@ -268,15 +268,8 @@ APIError APINoiseFrameHelper::try_read_frame_(ParsedFrame *frame) {
   }
 
   // Only check for available data when starting a new frame read
-  if (rx_header_buf_len_ == 0) {
-    ssize_t available = socket_->available();
-    if (available == 0) {
-      return APIError::WOULD_BLOCK;
-    } else if (available == -1) {
-      state_ = State::FAILED;
-      HELPER_LOG("Socket available failed with errno %d", errno);
-      return APIError::SOCKET_READ_FAILED;
-    }
+  if (rx_header_buf_len_ == 0 && socket_->available() == 0) {
+    return APIError::WOULD_BLOCK;
   }
 
   // read header
@@ -840,15 +833,8 @@ APIError APIPlaintextFrameHelper::try_read_frame_(ParsedFrame *frame) {
   }
 
   // Only check for available data when starting a new frame read
-  if (rx_header_buf_pos_ == 0) {
-    ssize_t available = socket_->available();
-    if (available == 0) {
-      return APIError::WOULD_BLOCK;
-    } else if (available == -1) {
-      state_ = State::FAILED;
-      HELPER_LOG("Socket read_available failed with errno %d", errno);
-      return APIError::SOCKET_READ_FAILED;
-    }
+  if (rx_header_buf_pos_ == 0 && socket_->available() == 0) {
+    return APIError::WOULD_BLOCK;
   }
 
   // read header
