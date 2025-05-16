@@ -41,7 +41,7 @@ jobs:
 
   deploy-docker:
     name: Build ESPHome ${{ matrix.platform }}
-    if: github.repository == 'esphome/esphome'
+    if: github.repository == 'LonelystartO/esphome'
     permissions:
       contents: read
       packages: write
@@ -77,15 +77,6 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build docker
-        uses: ./.github/actions/build-image
-        with:
-          platform: ${{ matrix.platform }}
-          target: docker
-          baseimg: docker
-          suffix: ""
-          version: ${{ needs.init.outputs.tag }}
-
       - name: Build ha-addon
         uses: ./.github/actions/build-image
         with:
@@ -93,15 +84,6 @@ jobs:
           target: hassio
           baseimg: hassio
           suffix: "hassio"
-          version: ${{ needs.init.outputs.tag }}
-
-      - name: Build lint
-        uses: ./.github/actions/build-image
-        with:
-          platform: ${{ matrix.platform }}
-          target: lint
-          baseimg: docker
-          suffix: lint
           version: ${{ needs.init.outputs.tag }}
 
       - name: Sanitize platform name
@@ -123,7 +105,7 @@ jobs:
     needs:
       - init
       - deploy-docker
-    if: github.repository == 'esphome/esphome'
+    if: github.repository == 'LonelystartO/esphome'
     permissions:
       contents: read
       packages: write
