@@ -68,7 +68,7 @@ ENV \
 RUN if [ "$TARGETARCH$TARGETVARIANT" = "armv7" ]; then \
       export PIP_EXTRA_INDEX_URL="https://www.piwheels.org/simple"; \
     fi && \
-    pip3 install --break-system-packages --no-cache-dir platformio==6.1.16
+    pip3 install --break-system-packages --no-cache-dir platformio==6.1.18
 
 # 新增：platformio 设置
 RUN \
