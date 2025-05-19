@@ -23,18 +23,13 @@ jobs:
         run: |
           if [[ "${{ github.event_name }}" = "release" ]]; then
             TAG="${{ github.event.release.tag_name}}"
+            # Remove "ihost-" prefix if present
+            TAG="${RAW_TAG#ihost-}"
             BRANCH_BUILD="false"
           else
             TAG=$(cat esphome/const.py | sed -n -E "s/^__version__\s+=\s+\"(.+)\"$/\1/p")
-            today="$(date --utc '+%Y%m%d')"
-            TAG="${TAG}${today}"
-            BRANCH=${GITHUB_REF#refs/heads/}
-            if [[ "$BRANCH" != "dev" ]]; then
-              TAG="${TAG}-${BRANCH}"
-              BRANCH_BUILD="true"
-            else
-              BRANCH_BUILD="false"
-            fi
+            TAG="${TAG}"
+            BRANCH_BUILD="true"
           fi
           echo "tag=${TAG}" >> $GITHUB_OUTPUT
           echo "branch_build=${BRANCH_BUILD}" >> $GITHUB_OUTPUT
